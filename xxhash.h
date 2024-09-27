@@ -169,6 +169,62 @@
  * xxHash prototypes and implementation
  */
 
+/*-**********************************************************************
+*  32-bit hash
+************************************************************************/
+#if defined(XXH_DOXYGEN) /* Don't show <stdint.h> include */
+/*!
+ * @brief An unsigned 32-bit integer.
+ *
+ * Not necessarily defined to `uint32_t` but functionally equivalent.
+ */
+typedef uint32_t XXH32_hash_t;
+
+#elif !defined (__VMS) \
+  && (defined (__cplusplus) \
+  || (defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */) )
+#   include <stdint.h>
+    typedef uint32_t XXH32_hash_t;
+
+#else
+#   include <limits.h>
+#   if UINT_MAX == 0xFFFFFFFFUL
+      typedef unsigned int XXH32_hash_t;
+#   elif ULONG_MAX == 0xFFFFFFFFUL
+      typedef unsigned long XXH32_hash_t;
+#   else
+#     error "unsupported platform: need a 32-bit type"
+#   endif
+#endif
+
+#ifndef XXH_NO_LONG_LONG
+/*-**********************************************************************
+*  64-bit hash
+************************************************************************/
+#if defined(XXH_DOXYGEN) /* don't include <stdint.h> */
+/*!
+ * @brief An unsigned 64-bit integer.
+ *
+ * Not necessarily defined to `uint64_t` but functionally equivalent.
+ */
+typedef uint64_t XXH64_hash_t;
+#elif !defined (__VMS) \
+  && (defined (__cplusplus) \
+  || (defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */) )
+#  include <stdint.h>
+   typedef uint64_t XXH64_hash_t;
+#else
+#  include <limits.h>
+#  if defined(__LP64__) && ULONG_MAX == 0xFFFFFFFFFFFFFFFFULL
+     /* LP64 ABI says uint64_t is unsigned long */
+     typedef unsigned long XXH64_hash_t;
+#  else
+     /* the following type must have a width of 64-bit */
+     typedef unsigned long long XXH64_hash_t;
+#  endif
+#endif
+#endif /*XXH_NO_LONG_LONG*/
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -476,34 +532,6 @@ typedef enum {
 } XXH_errorcode;
 
 
-/*-**********************************************************************
-*  32-bit hash
-************************************************************************/
-#if defined(XXH_DOXYGEN) /* Don't show <stdint.h> include */
-/*!
- * @brief An unsigned 32-bit integer.
- *
- * Not necessarily defined to `uint32_t` but functionally equivalent.
- */
-typedef uint32_t XXH32_hash_t;
-
-#elif !defined (__VMS) \
-  && (defined (__cplusplus) \
-  || (defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */) )
-#   include <stdint.h>
-    typedef uint32_t XXH32_hash_t;
-
-#else
-#   include <limits.h>
-#   if UINT_MAX == 0xFFFFFFFFUL
-      typedef unsigned int XXH32_hash_t;
-#   elif ULONG_MAX == 0xFFFFFFFFUL
-      typedef unsigned long XXH32_hash_t;
-#   else
-#     error "unsupported platform: need a 32-bit type"
-#   endif
-#endif
-
 /*!
  * @}
  *
@@ -769,31 +797,6 @@ XXH_PUBLIC_API XXH_PUREF XXH32_hash_t XXH32_hashFromCanonical(const XXH32_canoni
  */
 
 #ifndef XXH_NO_LONG_LONG
-/*-**********************************************************************
-*  64-bit hash
-************************************************************************/
-#if defined(XXH_DOXYGEN) /* don't include <stdint.h> */
-/*!
- * @brief An unsigned 64-bit integer.
- *
- * Not necessarily defined to `uint64_t` but functionally equivalent.
- */
-typedef uint64_t XXH64_hash_t;
-#elif !defined (__VMS) \
-  && (defined (__cplusplus) \
-  || (defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */) )
-#  include <stdint.h>
-   typedef uint64_t XXH64_hash_t;
-#else
-#  include <limits.h>
-#  if defined(__LP64__) && ULONG_MAX == 0xFFFFFFFFFFFFFFFFULL
-     /* LP64 ABI says uint64_t is unsigned long */
-     typedef unsigned long XXH64_hash_t;
-#  else
-     /* the following type must have a width of 64-bit */
-     typedef unsigned long long XXH64_hash_t;
-#  endif
-#endif
 
 /*!
  * @}
